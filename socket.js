@@ -31,7 +31,7 @@ module.exports.initIO = (httpServer) => {
       let recipent = data.caller;
       sdpOfferAnswer = data.sdpOfferAnswer;
 // console.log("in the answercaall ",data,callerId,rtcMessage)
-console.log(recipent,sdpOfferAnswer,"in the answer call")
+// console.log(recipent,sdpOfferAnswer,"in the answer call")
       socket.to(recipent).emit("callAnswered", {
         recipent,
         sdpOfferAnswer
@@ -50,14 +50,24 @@ console.log(recipent,sdpOfferAnswer,"in the answer call")
     });
     socket.on("end-call",(data)=>{
       let recipient=data?.recipient;
-      console.log(recipient,"printhe in teh  end call")
+      // console.log(recipient,"printhe in teh  end call")
       socket.to(recipient).emit("call-ended")
+    })
+    socket.on("reject-call",(data)=>{
+    let recipient=data?.recipient;
+    // console.log(recipient,data,"pringthe recipient")
+    socket.to(recipient).emit("rejected")
     })
     socket.on("call-rejected",(data)=>{
       let recipient=data?.recipient
       socket.emit("call-rejected-by-recipient",{
         recipient:recipient
       })
+    })
+
+    socket.on("close-call",(data)=>{
+      let recipient=data?.recipient;
+      socket.to(recipient).emit("closedCall")
     })
   });
 };
